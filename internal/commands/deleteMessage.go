@@ -18,6 +18,7 @@ func DeleteHandler(bot *tgbotapi.BotAPI, chatID int64, messageID int) {
 
 func DeleteInlineKeyboard(bot *tgbotapi.BotAPI, chatID int64, messageID int, min int64) {
 	time.Sleep(time.Duration(min) * time.Minute)
+
 	emptyKeyboard := tgbotapi.InlineKeyboardMarkup{
 		InlineKeyboard: [][]tgbotapi.InlineKeyboardButton{},
 	}
@@ -28,7 +29,6 @@ func DeleteInlineKeyboard(bot *tgbotapi.BotAPI, chatID int64, messageID int, min
 			ReplyMarkup: &emptyKeyboard,
 		},
 	}
-
 	if _, err := bot.Send(edit); err != nil {
 		log.Println("Failed to remove inline keyboard:", err)
 	}
