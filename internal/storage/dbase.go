@@ -7,7 +7,7 @@ import (
 )
 
 func ConnectGorm() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("../../internal/storage/users.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("users.db"), &gorm.Config{})
 	if err != nil {
 		log.Panic("Failed to open the SQLite database.")
 	}

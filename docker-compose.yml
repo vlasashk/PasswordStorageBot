@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - TELEGRAM_BOT_TOKEN=<INSERT TOKEN HERE>
+    ports:
+      - "8080:8080"
+    restart: always
