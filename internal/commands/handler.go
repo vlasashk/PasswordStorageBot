@@ -8,12 +8,6 @@ import (
 	"strings"
 )
 
-type ClientConfig struct {
-	Bot  *tgbotapi.BotAPI
-	Menu *tgbotapi.ReplyKeyboardMarkup
-	Msg  *tgbotapi.MessageConfig
-}
-
 func (client *ClientConfig) UpdateHandler(update *tgbotapi.Update, users *storage.UserServices) {
 	if update.Message != nil { // ignore non-Message updates
 		userID := update.Message.From.ID

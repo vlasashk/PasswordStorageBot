@@ -9,8 +9,9 @@ import (
 
 func (client *ClientConfig) GetInformer(update *tgbotapi.Update, users *storage.UserServices) {
 	userID := update.Message.From.ID
-	if len(users.UserData[userID].ServiceName) > 0 {
-		sentMsg := client.SendWithKeyboard(update.Message.Chat.ID, configs.GetMsg, "get", users.UserData[userID].ServiceName)
+	userServices := storage.GetServicesByUser(client.DB, userID)
+	if len(userServices) > 0 {
+		sentMsg := client.SendWithKeyboard(update.Message.Chat.ID, configs.GetMsg, "get", userServices)
 		go DeleteInlineKeyboard(client.Bot, sentMsg.Chat.ID, sentMsg.MessageID, 2)
 		user := users.UserData[userID]
 		user.Input.Cmd = 2
@@ -33,8 +34,9 @@ func (client *ClientConfig) GetHandler(update *tgbotapi.Update, users *storage.U
 		msg = strings.Split(update.CallbackQuery.Data, " ")[0]
 		chatID = update.CallbackQuery.Message.Chat.ID
 	}
-	service, ok := users.UserData[userID].ServiceName[msg]
+	ok := storage.ServiceExist(client.DB, userID, msg)
 	if ok {
+		service := storage.GetService(client.DB, userID, msg)
 		replyString := msg + " credentials.\n" + "\nLogin: " + service.Login + "\nPassword: " + service.Password
 		sentMsg := client.Send(chatID, replyString)
 		go DeleteHandler(client.Bot, sentMsg.Chat.ID, sentMsg.MessageID)

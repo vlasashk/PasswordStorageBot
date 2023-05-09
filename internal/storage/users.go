@@ -1,5 +1,7 @@
 package storage
 
+import "gorm.io/gorm"
+
 type UserServices struct {
 	UserData map[int64]User
 }
@@ -8,7 +10,7 @@ type User struct {
 	UserID      int64
 	Input       Action
 	CurrServ    string
-	ServiceName map[string]Service
+	ServiceName Service
 }
 
 type Service struct {
@@ -20,6 +22,20 @@ type Action struct {
 	Cmd   int //0 - command, 1 - set, 2 - get, 3 - del
 	Login bool
 	Pass  bool
+}
+
+type UserStorage struct {
+	gorm.Model
+	UserID   int64            `gorm:"primaryKey"`
+	Services []ServiceStorage `gorm:"ForeignKey:UserID"`
+}
+
+type ServiceStorage struct {
+	gorm.Model
+	Name     string `gorm:"primaryKey"`
+	UserID   int64
+	Login    string
+	Password string
 }
 
 func InitUsersStorage() *UserServices {
@@ -36,19 +52,8 @@ func InitUser(usersData *UserServices, ID int64) {
 			UserID:      ID,
 			Input:       Action{Cmd: 0, Login: false, Pass: false},
 			CurrServ:    "",
-			ServiceName: make(map[string]Service),
+			ServiceName: Service{"", ""},
 		}
 		(*usersData).UserData[ID] = user
-	}
-}
-
-func InitService(usersData *UserServices, ID int64, name string) {
-	_, ok := (*usersData).UserData[ID].ServiceName[name]
-	if !ok {
-		service := Service{
-			Login:    "",
-			Password: "",
-		}
-		(*usersData).UserData[ID].ServiceName[name] = service
 	}
 }

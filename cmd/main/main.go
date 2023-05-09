@@ -14,6 +14,7 @@ func main() {
 	usersData := storage.InitUsersStorage()
 
 	client := commands.ClientConfig{
+		DB:   storage.ConnectGorm(),
 		Bot:  commands.InitBot(configs.BotToken),
 		Menu: &tgMenu,
 		Msg:  &msg}
@@ -30,6 +31,7 @@ func main() {
 			userID = update.CallbackQuery.From.ID
 		}
 		storage.InitUser(usersData, userID)
+		storage.AddUser(client.DB, userID)
 		client.UpdateHandler(&update, usersData)
 	}
 }

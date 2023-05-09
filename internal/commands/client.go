@@ -4,8 +4,16 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/vlasashk/PasswordStorageBot/internal"
 	"github.com/vlasashk/PasswordStorageBot/internal/storage"
+	"gorm.io/gorm"
 	"log"
 )
+
+type ClientConfig struct {
+	DB   *gorm.DB
+	Bot  *tgbotapi.BotAPI
+	Menu *tgbotapi.ReplyKeyboardMarkup
+	Msg  *tgbotapi.MessageConfig
+}
 
 func InitBot(token string) (bot *tgbotapi.BotAPI) {
 	bot, err := tgbotapi.NewBotAPI(token)
