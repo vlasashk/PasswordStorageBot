@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - TELEGRAM_BOT_TOKEN=<INSERT TOKEN HERE>
+      - TELEGRAM_BOT_TOKEN=<YOUR TOKEN HERE>
     ports:
       - "8080:8080"
     restart: always

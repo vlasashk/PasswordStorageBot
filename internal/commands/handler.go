@@ -3,13 +3,14 @@ package commands
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/vlasashk/PasswordStorageBot/configs"
+	"github.com/vlasashk/PasswordStorageBot/internal/security"
 	"github.com/vlasashk/PasswordStorageBot/internal/storage"
 	"log"
 	"strings"
 )
 
 func (client *ClientConfig) UpdateHandler(update *tgbotapi.Update, users *storage.UserServices) {
-	if update.Message != nil { // ignore non-Message updates
+	if update.Message != nil && len(update.Message.Text) > 0 {
 		userID := update.Message.From.ID
 		if update.Message.IsCommand() || client.KeyboardVerify(update) {
 			TerminateCommand(users, userID)
@@ -29,8 +30,7 @@ func (client *ClientConfig) UpdateHandler(update *tgbotapi.Update, users *storag
 	} else if update.CallbackQuery != nil {
 		chatID := update.CallbackQuery.Message.Chat.ID
 		msgId := update.CallbackQuery.Message.MessageID
-		//userID := update.CallbackQuery.From.ID
-		DeleteInlineKeyboard(client.Bot, chatID, msgId, 0)
+		security.DeleteInlineKeyboard(client.Bot, chatID, msgId, 0)
 
 		callback := tgbotapi.NewCallback(update.CallbackQuery.ID, update.CallbackQuery.Data)
 		if _, err := client.Bot.Request(callback); err != nil {

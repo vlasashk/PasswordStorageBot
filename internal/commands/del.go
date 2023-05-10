@@ -3,6 +3,7 @@ package commands
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/vlasashk/PasswordStorageBot/configs"
+	"github.com/vlasashk/PasswordStorageBot/internal/security"
 	"github.com/vlasashk/PasswordStorageBot/internal/storage"
 	"strings"
 )
@@ -12,7 +13,7 @@ func (client *ClientConfig) DelInformer(update *tgbotapi.Update, users *storage.
 	userServices := storage.GetServicesByUser(client.DB, userID)
 	if len(userServices) > 0 {
 		sentMsg := client.SendWithKeyboard(update.Message.Chat.ID, configs.DelMsg, "del", userServices)
-		go DeleteInlineKeyboard(client.Bot, sentMsg.Chat.ID, sentMsg.MessageID, 2)
+		go security.DeleteInlineKeyboard(client.Bot, sentMsg.Chat.ID, sentMsg.MessageID, 2)
 		user := users.UserData[userID]
 		user.Input.Cmd = 3
 		users.UserData[userID] = user

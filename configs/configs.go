@@ -6,6 +6,7 @@ import (
 )
 
 var BotToken string = os.Getenv("TELEGRAM_BOT_TOKEN")
+var SecretKey = []byte("UltraMeGaGigA_S3cr3tK3Y_No1_kNow")
 
 type MessageConfig struct {
 	tgbotapi.BaseChat

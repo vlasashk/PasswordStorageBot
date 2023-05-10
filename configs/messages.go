@@ -23,6 +23,8 @@ In order to add new service you must remove one.`
 If you want to change credentials for this service you must first remove it and then add it once more with new data.`
 	EmptyMsg string = `Your account doesn't have any added services.
 Try /set to add new one`
-	MissingMsg string = `Your account doesn't have any available credentials for `
-	LenErrMsg  string = `Your input is too long. Input must be no longer then 50 characters`
+	MissingMsg  string = `Your account doesn't have any available credentials for `
+	LenErrMsg   string = `Your input is too long. Input must be no longer then 50 characters`
+	EncrFailMsg string = `Failed to encrypt password`
+	DecrFailMsg string = `Failed to decrypt password`
 )

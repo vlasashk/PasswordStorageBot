@@ -3,6 +3,7 @@ package commands
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/vlasashk/PasswordStorageBot/configs"
+	"github.com/vlasashk/PasswordStorageBot/internal/security"
 	"github.com/vlasashk/PasswordStorageBot/internal/storage"
 	"strings"
 )
@@ -12,7 +13,7 @@ func (client *ClientConfig) GetInformer(update *tgbotapi.Update, users *storage.
 	userServices := storage.GetServicesByUser(client.DB, userID)
 	if len(userServices) > 0 {
 		sentMsg := client.SendWithKeyboard(update.Message.Chat.ID, configs.GetMsg, "get", userServices)
-		go DeleteInlineKeyboard(client.Bot, sentMsg.Chat.ID, sentMsg.MessageID, 2)
+		go security.DeleteInlineKeyboard(client.Bot, sentMsg.Chat.ID, sentMsg.MessageID, 2)
 		user := users.UserData[userID]
 		user.Input.Cmd = 2
 		users.UserData[userID] = user
@@ -37,9 +38,14 @@ func (client *ClientConfig) GetHandler(update *tgbotapi.Update, users *storage.U
 	ok := storage.ServiceExist(client.DB, userID, msg)
 	if ok {
 		service := storage.GetService(client.DB, userID, msg)
-		replyString := msg + " credentials.\n" + "\nLogin: " + service.Login + "\nPassword: " + service.Password
-		sentMsg := client.Send(chatID, replyString)
-		go DeleteHandler(client.Bot, sentMsg.Chat.ID, sentMsg.MessageID)
+		password, err := security.DecryptPass(service.Password)
+		if err != nil {
+			client.Send(update.Message.Chat.ID, configs.DecrFailMsg)
+		} else {
+			replyString := msg + " credentials.\n" + "\nLogin: " + service.Login + "\nPassword: " + password
+			sentMsg := client.Send(chatID, replyString)
+			go security.DeleteHandler(client.Bot, sentMsg.Chat.ID, sentMsg.MessageID)
+		}
 	} else {
 		client.Send(chatID, configs.MissingMsg+msg)
 	}
